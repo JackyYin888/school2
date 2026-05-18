@@ -1,9 +1,9 @@
 const COLORS = {
-  trend: "#0f6f68",
-  youtao: "#c45532",
-  shanghua: "#d99b25",
-  jujiang: "#566b7c",
-  huanyu: "#755da6",
+  trend: "#39e8ff",
+  youtao: "#ff6d8a",
+  shanghua: "#ffb84d",
+  jujiang: "#8ea3ff",
+  huanyu: "#8cffbf",
 };
 
 const MONTHS = ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"];
@@ -180,7 +180,7 @@ function renderHeatmap(items) {
   items.forEach((item) => {
     cells.push(`<div class="heat-label">${item.shortName}</div>`);
     item.months.forEach((level) => {
-      const color = level === "H" ? "var(--accent-2)" : level === "M" ? "var(--accent-3)" : "#cfd7d4";
+      const color = level === "H" ? "var(--danger)" : level === "M" ? "var(--accent-2)" : "#33515e";
       cells.push(`<div class="heat-cell" data-level="${level}" style="background:${color}">${level}</div>`);
     });
   });
@@ -449,7 +449,7 @@ document.querySelector("#addCompetitorForm").addEventListener("submit", (event) 
     id,
     name,
     shortName: name.slice(0, 2),
-    color: "#2f8aa8",
+    color: "#39e8ff",
     positioning: "已新增文件，等待整理分析",
     logic: "已加入比較清單；需整理上傳文件後，可補入年度節奏與招生高峰。",
     channel: `來源文件：${sourceFile}`,
