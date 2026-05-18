@@ -1,355 +1,196 @@
 <!doctype html>
 <html lang="zh-Hant">
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>文城大安校競品行銷廣告分析</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>學生成績表現資料庫</title>
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <header class="topbar">
-      <div>
-        <h1>文城大安校競品行銷廣告分析</h1>
-      </div>
-    </header>
-
-    <main class="layout">
-      <aside class="control-panel" aria-label="比較設定">
-        <section class="panel-section">
-          <div class="section-title">
-            <h2>比較名單</h2>
-            <button id="resetSelection" class="icon-button" type="button" title="恢復五家預設">↺</button>
+    <div class="app-shell">
+      <header class="topbar">
+        <div class="brand-block">
+          <div class="brand-mark" aria-hidden="true">成</div>
+          <div>
+            <p class="eyebrow">補習班管理介面</p>
+            <h1>學生成績表現資料庫</h1>
           </div>
-          <div id="competitorToggles" class="toggle-list"></div>
-        </section>
+        </div>
+        <div class="top-actions">
+          <button id="addStudentBtn" class="primary-btn" type="button" title="新增學生">
+            <span aria-hidden="true">＋</span>
+            新增學生
+          </button>
+          <button id="exportBtn" class="icon-btn" type="button" title="匯出 JSON">
+            <span aria-hidden="true">⇩</span>
+          </button>
+          <button id="resetBtn" class="icon-btn" type="button" title="恢復示範資料">
+            <span aria-hidden="true">↺</span>
+          </button>
+        </div>
+      </header>
 
-        <section class="panel-section">
-          <div class="section-title">
-            <h2>新增補習班</h2>
-          </div>
-          <form id="addCompetitorForm" class="add-form">
-            <label>
-              名稱
-              <input id="newName" name="newName" type="text" placeholder="例如：文城大安校" required />
-            </label>
-            <label>
-              文件檔
-              <input id="newDocument" name="newDocument" type="file" accept=".doc,.docx,.pdf,.txt" required />
-            </label>
-            <button class="primary-button" type="submit">新增到比較</button>
-          </form>
-        </section>
-
-      </aside>
-
-      <section class="content">
-        <section class="hero-band">
-          <div class="hero-copy">
-            <p class="eyebrow">Competitive Rhythm Dashboard</p>
-            <h2>用競品節奏反推文城大安校的招生攻防與家長決策心理。</h2>
-            <p>
-              這份互動頁整合五家競品的年度行銷節奏、五年內社群貼文資料與文城大安校家說會洞察，
-              讓經營決策可以同時看見「對手何時出手」與「家長為何願意投入」。
-            </p>
-          </div>
-          <div class="hero-metrics">
-            <div>
-              <span id="selectedCount">5</span>
-              <small>比較品牌</small>
-            </div>
-            <div>
-              <span id="highMonthCount">0</span>
-              <small>高強度月份</small>
-            </div>
-            <div>
-              <span id="peakMonthLabel">7月</span>
-              <small>競爭最熱月份</small>
-            </div>
-          </div>
-        </section>
-
-        <section class="toolbar" aria-label="資料視角">
-          <button class="tab-button active" type="button" data-view="overview">總覽</button>
-          <button class="tab-button" type="button" data-view="channels">通路與內容</button>
-          <button class="tab-button" type="button" data-view="risks">弱點缺口</button>
-          <button class="tab-button" type="button" data-view="blueprint">行銷藍圖</button>
-          <button class="tab-button" type="button" data-view="archive">貼文資料庫</button>
-          <button class="tab-button" type="button" data-view="wenshine">文城策略</button>
-        </section>
-
-        <section class="view active" data-view-panel="overview">
-          <div class="grid two">
-            <article class="module wide">
-              <div class="module-head">
-                <div>
-                  <p class="eyebrow">Annual Heatmap</p>
-                  <h3>年度月份廣告強度</h3>
-                </div>
-                <div class="legend">
-                  <span><i class="level high"></i>高</span>
-                  <span><i class="level mid"></i>中</span>
-                  <span><i class="level low"></i>低</span>
-                </div>
-              </div>
-              <div id="heatmap" class="heatmap"></div>
-            </article>
-
-            <article class="module">
-              <div class="module-head">
-                <div>
-                  <p class="eyebrow">Market Map</p>
-                  <h3>定位矩陣</h3>
-                </div>
-              </div>
-              <canvas id="positionCanvas" class="position-canvas" width="760" height="520"></canvas>
-            </article>
-          </div>
-
-          <article class="module">
-            <div class="module-head">
-              <div>
-                <p class="eyebrow">Core Positioning</p>
-                <h3>核心定位總覽</h3>
-              </div>
-            </div>
-            <div id="overviewCards" class="card-grid"></div>
+      <main class="workspace">
+        <section class="overview-grid" aria-label="成績摘要">
+          <article class="metric-card">
+            <span>學生數</span>
+            <strong id="studentCount">0</strong>
+            <small>目前追蹤人數</small>
           </article>
-
-          <article class="module">
-            <div class="module-head">
-              <div>
-                <p class="eyebrow">Competitive Archetypes</p>
-                <h3>五種競爭者模型</h3>
-              </div>
-            </div>
-            <div class="model-grid">
-              <div><span>趨勢</span><strong>全年心理戰與私域收割型</strong><p>用資訊壟斷、FOMO、實驗視覺與 LINE 私域控制家長全年焦慮週期。</p></div>
-              <div><span>游濤</span><strong>低頻成果查證型</strong><p>不追流量，靠滿分考卷、方法論與高端榜單讓需求自己找上門。</p></div>
-              <div><span>上華</span><strong>在地雙峰促銷型</strong><p>暑期與寒假雙峰爆發，用學區口碑、名額壓力與表單轉換推動報名。</p></div>
-              <div><span>巨江</span><strong>專科權威講座型</strong><p>以理化權威與校別直升專班形成榜單、講座、成交的短路徑。</p></div>
-              <div><span>寰宇</span><strong>高頻陪伴品牌型</strong><p>用國際感、活動感、學生舞台與日常陪伴建立長期家長忠誠。</p></div>
-            </div>
+          <article class="metric-card">
+            <span>整體平均</span>
+            <strong id="classAverage">0</strong>
+            <small>依目前匯入成績計算</small>
+          </article>
+          <article class="metric-card">
+            <span>高關注</span>
+            <strong id="attentionCount">0</strong>
+            <small>平均低於 70 分</small>
+          </article>
+          <article class="metric-card accent">
+            <span>領先學生</span>
+            <strong id="topStudent">-</strong>
+            <small id="topStudentMeta">尚無資料</small>
           </article>
         </section>
 
-        <section class="view" data-view-panel="channels">
-          <div class="grid two">
-            <article class="module">
-              <div class="module-head">
-                <div>
-                  <p class="eyebrow">Content Mix</p>
-                  <h3>內容武器比例</h3>
-                </div>
+        <section class="toolbar-panel" aria-label="篩選工具">
+          <label class="search-box">
+            <span aria-hidden="true">⌕</span>
+            <input id="searchInput" type="search" placeholder="搜尋姓名、學號或學校" />
+          </label>
+          <label class="select-wrap">
+            <span>表現</span>
+            <select id="statusFilter">
+              <option value="all">全部</option>
+              <option value="優異">優異</option>
+              <option value="穩定">穩定</option>
+              <option value="需追蹤">需追蹤</option>
+              <option value="高關注">高關注</option>
+            </select>
+          </label>
+          <label class="select-wrap">
+            <span>排序</span>
+            <select id="sortSelect">
+              <option value="avg-desc">平均分高到低</option>
+              <option value="avg-asc">平均分低到高</option>
+              <option value="trend-desc">科目差距高到低</option>
+              <option value="name-asc">姓名排序</option>
+            </select>
+          </label>
+        </section>
+
+        <section class="content-grid">
+          <section class="table-panel" aria-label="學生成績">
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow">段考成績總覽</p>
+                <h2>學生表現追蹤</h2>
               </div>
-              <div id="contentMix" class="mix-list"></div>
-            </article>
-            <article class="module">
-              <div class="module-head">
-                <div>
-                  <p class="eyebrow">Conversion</p>
-                  <h3>通路與轉換摩擦</h3>
-                </div>
+              <p id="visibleCount" class="subtle-copy">顯示 0 位學生</p>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr id="tableHeaderRow"></tr>
+                </thead>
+                <tbody id="studentTableBody"></tbody>
+              </table>
+            </div>
+          </section>
+
+          <aside class="detail-panel" aria-label="學生細節">
+            <div class="section-heading compact">
+              <div>
+                <p class="eyebrow">個別學生</p>
+                <h2 id="detailName">請選擇學生</h2>
               </div>
-              <div id="channelCards" class="stack-list"></div>
-            </article>
+              <button id="editStudentBtn" class="ghost-btn" type="button" disabled>
+                編輯
+              </button>
+            </div>
+
+            <div class="student-summary">
+              <div>
+                <span>平均</span>
+                <strong id="detailAverage">-</strong>
+              </div>
+              <div>
+                <span>排名</span>
+                <strong id="detailRank">-</strong>
+              </div>
+              <div>
+                <span>狀態</span>
+                <strong id="detailStatus">-</strong>
+              </div>
+            </div>
+
+            <div class="chart-card">
+              <div class="chart-header">
+                <span>各科成績輪廓</span>
+                <small id="trendLabel">尚未選擇資料</small>
+              </div>
+              <svg id="scoreChart" viewBox="0 0 640 260" role="img" aria-label="學生成績走勢圖"></svg>
+            </div>
+
+            <div class="insight-card">
+              <span>建議動作</span>
+              <p id="adviceText">點選左側學生後，這裡會顯示對應的追蹤建議。</p>
+            </div>
+          </aside>
+        </section>
+      </main>
+    </div>
+
+    <dialog id="studentDialog">
+      <form id="studentForm" method="dialog" class="dialog-form">
+        <div class="dialog-head">
+          <div>
+            <p class="eyebrow">學生資料</p>
+            <h2 id="dialogTitle">新增學生</h2>
           </div>
-        </section>
+          <button id="closeDialogBtn" class="icon-btn" type="button" title="關閉">×</button>
+        </div>
 
-        <section class="view" data-view-panel="risks">
-          <article class="module">
-            <div class="module-head">
-              <div>
-                <p class="eyebrow">Strategic Gaps</p>
-                <h3>弱點盤點與可攻擊缺口</h3>
-              </div>
-            </div>
-            <div id="riskRows" class="risk-table"></div>
-          </article>
-        </section>
+        <div class="form-grid">
+          <label>
+            <span>學號</span>
+            <input name="id" required />
+          </label>
+          <label>
+            <span>姓名</span>
+            <input name="name" required />
+          </label>
+          <label>
+            <span>學校</span>
+            <input name="className" required />
+          </label>
+          <label>
+            <span>家長提醒</span>
+            <select name="followUp">
+              <option value="一般追蹤">一般追蹤</option>
+              <option value="需要回饋">需要回饋</option>
+              <option value="優先聯繫">優先聯繫</option>
+            </select>
+          </label>
+        </div>
 
-        <section class="view" data-view-panel="blueprint">
-          <div class="grid two">
-            <article class="module">
-              <div class="module-head">
-                <div>
-                  <p class="eyebrow">Wenshine Parent Insight</p>
-                  <h3>家長買的不是補習，而是確定性</h3>
-                </div>
-              </div>
-              <div class="insight-stack">
-                <div>
-                  <strong>單人富養</strong>
-                  <p>少子化不是教育需求下降，而是每個孩子承載更高期待；家長願意把資源集中到最有把握的升學路徑。</p>
-                </div>
-                <div>
-                  <strong>108課綱後的進度焦慮</strong>
-                  <p>公校常態分班讓強勢學生容易等待，私校與私中族群則提前規劃進度；文城可把「領先一年」拆成看得見的節點。</p>
-                </div>
-                <div>
-                  <strong>買一個環境</strong>
-                  <p>家長擔心校園衝突、網路黑子化與同儕影響；招生訊息要把文城描繪成更受控、更單純、更能被看顧的學習場域。</p>
-                </div>
-                <div>
-                  <strong>一條龍確定感</strong>
-                  <p>私校吸引力來自國中、高中到大學的連續安全感；文城的課程藍圖應對接這種「少走彎路」的心理需求。</p>
-                </div>
-                <div>
-                  <strong>私校取代學區房</strong>
-                  <p>對部分家庭來說，學費比高房價更可控；行銷可把文城定位為降低教育不確定性的高效率投資。</p>
-                </div>
-              </div>
-            </article>
+        <fieldset>
+          <legend>各科分數</legend>
+          <div class="score-input-grid" id="scoreInputs"></div>
+        </fieldset>
 
-            <article class="module">
-              <div class="module-head">
-                <div>
-                  <p class="eyebrow">Content Pyramid</p>
-                  <h3>社群貼文黃金配比</h3>
-                </div>
-              </div>
-              <div class="pyramid-list">
-                <div style="--w: 40%; --c: var(--accent-2)"><span>招生轉化型</span><strong>40%</strong></div>
-                <div style="--w: 25%; --c: var(--accent-3)"><span>成果榜單型</span><strong>25%</strong></div>
-                <div style="--w: 15%; --c: #566b7c"><span>學生互動型</span><strong>15%</strong></div>
-                <div style="--w: 10%; --c: #755da6"><span>家長信任型</span><strong>10%</strong></div>
-                <div style="--w: 10%; --c: var(--accent)"><span>品牌形象型</span><strong>10%</strong></div>
-              </div>
-            </article>
+        <div class="dialog-actions">
+          <button id="deleteStudentBtn" class="danger-btn" type="button">刪除</button>
+          <div class="dialog-action-right">
+            <button id="cancelDialogBtn" class="ghost-btn" type="button">取消</button>
+            <button class="primary-btn" type="submit">儲存</button>
           </div>
+        </div>
+      </form>
+    </dialog>
 
-          <article class="module">
-            <div class="module-head">
-              <div>
-                <p class="eyebrow">Wenshine Message System</p>
-                <h3>文城大安校招生訊息主軸</h3>
-              </div>
-            </div>
-            <div class="model-grid">
-              <div><span>01</span><strong>少子化反而更競爭</strong><p>主張不是「孩子變少就比較好考」，而是每個家庭投入更多，私校與升學卡位更早發生。</p></div>
-              <div><span>02</span><strong>從補課變成提前布局</strong><p>把文城課程包裝成升學路線圖：進度、檢核、複習、校別銜接都要讓家長看見秩序。</p></div>
-              <div><span>03</span><strong>用環境與同儕建立信任</strong><p>社群內容除了榜單，也要呈現班級秩序、師生互動、學習氣氛與家長可感的安全感。</p></div>
-              <div><span>04</span><strong>1969 年底蘊變成品牌護城河</strong><p>把文城教育學院長期辦學資歷轉成穩定、成熟、可託付的招生語氣，和競品的短期促銷做出區隔。</p></div>
-            </div>
-          </article>
-
-          <article class="module">
-            <div class="module-head">
-              <div>
-                <p class="eyebrow">Annual Clock</p>
-                <h3>雙峰驅動的年度招生時鐘</h3>
-              </div>
-            </div>
-            <div class="clock-grid">
-              <div><span>1–2月</span><strong>考前收割期</strong><p>滿班公告、寒訓執行、最後加開，承接高意向家長。</p></div>
-              <div><span>3–5月</span><strong>轉銜與榜單期</strong><p>放榜、段考滿分、銜接講座，讓焦慮從考前轉向國中銜接。</p></div>
-              <div><span>6–8月</span><strong>暑期黃金檔</strong><p>全年最高預算區間，主打暑期不領先、開學就落後。</p></div>
-              <div><span>9–11月</span><strong>私域蓄水期</strong><p>用 LINE、懶人包、升學分析與榜單定錨，準備冬季轉換。</p></div>
-              <div><span>12月</span><strong>寒假招生衝刺</strong><p>早鳥、名額倒數、榮耀折現法，吸納高績效學生。</p></div>
-            </div>
-          </article>
-
-          <article class="module">
-            <div class="module-head">
-              <div>
-                <p class="eyebrow">Trend Playbook</p>
-                <h3>趨勢最完整版：五層漏斗與七大內容類型</h3>
-              </div>
-            </div>
-            <div class="funnel-grid">
-              <div><strong>曝光</strong><p>FB 貼文、榜單、實驗短影音，建立存在感與初步信任。</p></div>
-              <div><strong>興趣</strong><p>私中懶人包、閱讀力文章、課堂花絮，把家長導向收藏、留言與加 LINE。</p></div>
-              <div><strong>評估</strong><p>家長說明會、免費試聽、能力檢測與模考，讓家長評估孩子適配度。</p></div>
-              <div><strong>成交</strong><p>寒訓、衝刺班、考猜、暑期班，用名額與時程壓力推動報名。</p></div>
-              <div><strong>留存</strong><p>課堂紀錄、成績回報、私中捷報與銜接課，轉為續班與轉介紹。</p></div>
-            </div>
-          </article>
-
-          <article class="module">
-            <div class="module-head">
-              <div>
-                <p class="eyebrow">Counter Strategy</p>
-                <h3>對趨勢的年度防禦與主動進攻</h3>
-              </div>
-            </div>
-            <div class="counter-grid">
-              <div><span>01</span><strong>明星 IP 中性化</strong><p>用團隊系統化教學、雙導師守護、APP 追蹤與完整複習規律，降低對手名師光環。</p></div>
-              <div><span>02</span><strong>Counter-25 銜接方案</strong><p>針對趨勢 3–6 月 25 場銜接課，推出更密集、更校別分流的全科銜接方案。</p></div>
-              <div><span>03</span><strong>10月資訊主權戰</strong><p>10月下旬先發布私中懶人包，加入「趨勢沒說的避坑指南」，提前占領家長心理空格。</p></div>
-              <div><span>04</span><strong>LINE 7天自動推送</strong><p>Day1 情報、Day3 權威案例、Day5 視覺/焦慮素材、Day7 稀缺名額，形成自己的私域閉環。</p></div>
-            </div>
-          </article>
-        </section>
-
-        <section class="view" data-view-panel="archive">
-          <article class="module">
-            <div class="module-head">
-              <div>
-                <p class="eyebrow">FB Post Archive</p>
-                <h3>貼文資料庫快速檢索</h3>
-              </div>
-              <span id="archiveResultCount" class="result-count">0 筆</span>
-            </div>
-            <div class="archive-tools">
-              <label>
-                關鍵字
-                <input id="archiveSearch" type="search" placeholder="例如：暑期、榜單、LINE、延平、AMC、理化" />
-              </label>
-              <label>
-                補習班
-                <select id="archiveSchool">
-                  <option value="all">全部</option>
-                </select>
-              </label>
-              <label>
-                主題
-                <select id="archiveTopic">
-                  <option value="all">全部主題</option>
-                </select>
-              </label>
-            </div>
-            <div id="archiveSummary" class="archive-summary"></div>
-            <div id="archiveResults" class="archive-results"></div>
-          </article>
-        </section>
-
-        <section class="view" data-view-panel="wenshine">
-          <div class="strategy-panel">
-            <div>
-              <p class="eyebrow">Wenshine Counter Strategy</p>
-              <h3>文城大安校建議打法</h3>
-              <p>
-                建議不要複製競品高頻 FOMO 廣告戰，而是用「50年底蘊 × 一期一會 × 180指標私中備考深度」
-                建立高信任密度的查證頁與提早卡位內容。
-              </p>
-            </div>
-            <div class="strategy-list">
-              <div>
-                <span>01</span>
-                <strong>10月先發資訊</strong>
-                <p>先於趨勢 11 月發布延平考試懶人包，搶占資訊信任第一印象。</p>
-              </div>
-              <div>
-                <span>02</span>
-                <strong>國文作文攔截</strong>
-                <p>趨勢新版資料顯示其理科與資訊壟斷極強，但國文敘事薄弱；文城可用閱讀與作文攻略形成跨科差異化。</p>
-              </div>
-              <div>
-                <span>03</span>
-                <strong>40-25-15-10-10 配比</strong>
-                <p>招生轉化40%、成果榜單25%、學生互動15%、家長信任10%、品牌形象10%，避免只剩硬銷。</p>
-              </div>
-              <div>
-                <span>04</span>
-                <strong>低摩擦私域收單</strong>
-                <p>用懶人包、能力檢測、說明會與 LINE/表單串成可追蹤路徑，把流量留在自己的名單池。</p>
-              </div>
-            </div>
-          </div>
-        </section>
-      </section>
-    </main>
-
-    <script src="./postData.js"></script>
-    <script src="./script.js"></script>
+    <script src="./imported-grade-data.js"></script>
+    <script src="./app.js"></script>
   </body>
 </html>
